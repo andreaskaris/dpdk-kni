@@ -4,7 +4,7 @@
 # https://doc.dpdk.org/guides/sample_app_ug/compiling.html
 
 yum install xz meson -y
-yum install "@Development Tools"
+yum install "@Development Tools" -y
 yum install python3-pyelftools.noarch -y
 curl -o dpdk.tar.xz https://fast.dpdk.org/rel/dpdk-21.11.tar.xz
 tar -xf dpdk.tar.xz
