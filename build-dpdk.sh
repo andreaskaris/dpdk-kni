@@ -11,7 +11,7 @@ cd /
 curl -o dpdk.tar.xz https://fast.dpdk.org/rel/dpdk-21.11.tar.xz
 tar -xf dpdk.tar.xz
 cd dpdk-21.11
-meson build
+meson -Dplatform=generic build
 cd build
 meson configure -Dexamples=all
 ninja
