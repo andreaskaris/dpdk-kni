@@ -16,7 +16,7 @@ spec:
     image: quay.io/akaris/dpdk-kni:v1.3
     env:
       - name: PCI_DEVICE_FILTER
-        value: "PCIDEVICE_OPENSHIFT_IO"
+        value: "PCIDEVICE_OPENSHIFT_IO_"
       - name: IP_ADDRESS
         value: "192.168.109.10/24"
     imagePullPolicy: IfNotPresent
