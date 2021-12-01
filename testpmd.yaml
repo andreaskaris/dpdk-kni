@@ -34,6 +34,15 @@ spec:
     volumeMounts:
     - mountPath: /dev/hugepages
       name: hugepage
+  - name: tcpdump
+    image: registry.example.com:5000/testpmd
+    imagePullPolicy: Always
+    command: ["/bin/bash", "-c", "while true; do if $ip link ls dp0; then tcpdump -nne -i dp0; fi ; echo 'Sleeping for 5 seconds'; sleep 5; done"]
+    securityContext:
+      privileged: true
+    volumeMounts:
+    - mountPath: /dev/hugepages
+      name: hugepage
   volumes:
   - name: hugepage
     emptyDir:
