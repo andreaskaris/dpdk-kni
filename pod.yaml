@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: sriovpoda
+  name: testpmd
   namespace: sriov-testing
   annotations:
     k8s.v1.cni.cncf.io/networks: '[
@@ -13,10 +13,13 @@ metadata:
 ]'
 spec:
   containers:
-  - name: sample-container
-    image: registry.example.com:5000/kni
+  - name: testpmd
+    image: registry.example.com:5000/testpmd
+    env:
+      PCI_DEVICE_FILTER: "PCIDEVICE_OPENSHIFT_IO"
+      IP_ADDRESS: "192.168.109.10"
     imagePullPolicy: Always
-    command: ["/bin/bash", "/entrypoint.sh"]
+    command: ["/bin/bash", "-c", "/entrypoint.sh"]
     resources:
       limits:
         hugepages-1Gi: "1Gi"
