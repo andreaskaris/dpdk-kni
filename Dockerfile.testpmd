@@ -3,7 +3,7 @@ COPY build-dpdk.sh /build-dpdk.sh
 RUN /bin/bash -x /build-dpdk.sh
 
 FROM registry.fedoraproject.org/fedora:34
-RUN yum install -y iputils iproute ethtool tcpdump nc
+RUN yum install -y iputils iproute ethtool tcpdump nc procps-ng
 COPY --from=0 /dpdk-21.11/build/examples/dpdk-ethtool /dpdk-ethtool
 COPY --from=0 /dpdk-21.11/build/app/dpdk-testpmd /dpdk-testpmd
 COPY entrypoint-testpmd.sh /entrypoint.sh
