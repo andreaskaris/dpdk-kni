@@ -31,4 +31,5 @@ addip &
 echo "Run testpmd and forward everything between dp0 tunnel interface and vfio interface"
 ( echo 'start' ; while true ; do echo 'show port stats all' ; sleep 60 ; done ) | /dpdk-testpmd --log-level=10 --legacy-mem --vdev=net_tap1,iface=dp0,mac=${MACADDR} -l $CPUS -n 4 -a $PCI_DEVICE_ID -- --nb-cores=1 --nb-ports=2  --total-num-mbufs=2048 -i
 
+echo "FAILURE! If we got here, this means that it's time for troubleshooting. Testpmd did not run or crashed!"
 sleep infinity
