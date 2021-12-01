@@ -18,7 +18,14 @@ echo "Run testpmd and forward everything between dp0 tunnel interface and vfio i
 sleep 15
 
 if [ "$IP_ADDRESS" != "" ];then
-	ip address add dev dp0 $IP_ADDRESS
+	while true; do
+		echo "Adding IP address to dp0"
+		if ip address add dev dp0 $IP_ADDRESS; then
+			break
+		fi
+		echo "Failed adding IP address to dp0, sleeping for 5 seconds"
+		sleep 5
+	done
 fi
 
 sleep infinity
