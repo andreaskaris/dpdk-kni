@@ -18,7 +18,7 @@ function addip {
 
 echo "Get PCI_DEVICE_ID from filter expression"
 PCI_DEVICE_FILTER=${PCI_DEVICE_FILTER:-PCIDEVICE_OPENSHIFT_IO}
-PCI_DEVICE_ID=$(env | grep $PCI_DEVICE_FILTER | awk -F '=' '{print $NF}' | head -1) 
+PCI_DEVICE_ID=$(env | egrep "^$PCI_DEVICE_FILTER" | awk -F '=' '{print $NF}' | head -1) 
 
 echo "Get MAC ADDRESS"
 MACADDR=$(echo "macaddr 0" | /dpdk-ethtool -a $PCI_DEVICE_ID | awk '/Port 0 MAC Address/ {print $NF}')
