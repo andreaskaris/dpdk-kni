@@ -80,6 +80,11 @@ The `IP_ADDRESS` must be adjusted and must contain the IP address and subnet mas
 Adjust the `k8s.v1.cni.cncf.io/networks:` annotation according to your needs and environment.
 Adjust the `imagePullPolicy: IfNotPresent` if needed.
 
+After adjusting the file, apply it:
+~~~
+# oc apply -f testpmd.yaml
+~~~
+
 ### Prerequisites
 
 First of all, deploy the SR-IOV operator and the Performance Addon Operator. The following steps are for OpenShift 4.6 and will vary depending on the OpenShift version. You will need working SR-IOV, CPU isolation and memory hugepages.
