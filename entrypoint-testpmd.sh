@@ -3,7 +3,7 @@
 # https://doc.dpdk.org/guides/linux_gsg/linux_eal_parameters.html
 # https://doc.dpdk.org/guides/sample_app_ug/kernel_nic_interface.html
 
-func addip() {
+function addip {
 	if [ "$IP_ADDRESS" != "" ];then
 	while true; do
 		echo "Adding IP address to dp0"
