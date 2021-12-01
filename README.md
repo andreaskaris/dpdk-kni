@@ -215,7 +215,11 @@ EOF
 # oc apply -f ./networkpolicy-vfiopci.yaml
 ~~~
 
-## How to build the containers
+## Quay builds
+
+Any tagged version `tags/v.*` will be built by quay.io.
+
+## How to build the containers manually
 
 ### testpmd container
 
@@ -229,4 +233,50 @@ make build-testpmd
 Dpdk binaries can be built with:
 ~~~
 make build-dpdk
+~~~
+
+## How it works
+
+After DPDK binaries are built, the following entrypoint script is responsible for all of the other magic.
+
+The script will run a function in the background which will wait for interface `dp0` to show up. When it does, it will attach `$IP_ADDRESS` to interface `dp0`.
+The script will run `dpdk-ethtool` to retrieve the SR-IOV interface's MAC address. It will then run `dpdk-testpmd`.
+The script will run in verbose mode `-x` so check the script logs if anything goes wrong.
+Also, the script will not exit, instead it will sleep forever if something goes wrong. That way, you can `oc rsh` to the pod and try running the commands yourself and play with the values.
+~~~
+#!/bin/bash -x
+
+# https://doc.dpdk.org/guides/linux_gsg/linux_eal_parameters.html
+# https://doc.dpdk.org/guides/sample_app_ug/kernel_nic_interface.html
+
+function addip {
+	if [ "$IP_ADDRESS" != "" ];then
+	while true; do
+		echo "Adding IP address to dp0"
+		if ip address add dev dp0 $IP_ADDRESS; then
+			break
+		fi
+		echo "Failed adding IP address to dp0, sleeping for 5 seconds"
+		sleep 5
+	done
+	fi
+}
+
+echo "Get PCI_DEVICE_ID from filter expression"
+PCI_DEVICE_FILTER=${PCI_DEVICE_FILTER:-PCIDEVICE_OPENSHIFT_IO}
+PCI_DEVICE_ID=$(env | grep $PCI_DEVICE_FILTER | awk -F '=' '{print $NF}' | head -1) 
+
+echo "Get MAC ADDRESS"
+MACADDR=$(echo "macaddr 0" | /dpdk-ethtool -a $PCI_DEVICE_ID | awk '/Port 0 MAC Address/ {print $NF}')
+echo "Get pinned CPUs"
+CPUS=$(cat /proc/self/status | awk '/Cpus_allowed_list/ {print $NF}')
+
+echo "Run addip script in background"
+addip &
+
+echo "Run testpmd and forward everything between dp0 tunnel interface and vfio interface"
+( echo 'start' ; while true ; do echo 'show port stats all' ; sleep 60 ; done ) | /dpdk-testpmd --log-level=10 --legacy-mem --vdev=net_tap1,iface=dp0,mac=${MACADDR} -l $CPUS -n 4 -a $PCI_DEVICE_ID -- --nb-cores=1 --nb-ports=2  --total-num-mbufs=2048 -i
+
+echo "FAILURE! If we got here, this means that it's time for troubleshooting. Testpmd did not run or crashed!"
+sleep infinity
 ~~~
