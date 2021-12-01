@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: sriovpoda
+  namespace: sriov-testing
+  annotations:
+    k8s.v1.cni.cncf.io/networks: '[
+{
+"name": "sriov-net-enp5s0f0-vfiopci",
+"mac": "20:04:0f:f1:88:01",
+"ips": ["192.168.109.10/24"]
+}
+]'
+spec:
+  containers:
+  - name: sample-container
+    image: registry.example.com:5000/kni
+    imagePullPolicy: Always
+    command: ["/bin/bash", "/entrypoint.sh"]
+    resources:
+      limits:
+        hugepages-1Gi: "1Gi"
+        memory: "2Gi"
+        cpu: "4000m"
+      requests:
+        hugepages-1Gi: "1Gi"
+        memory: "2Gi"
+        cpu: "4000m"
+    securityContext:
+      privileged: true
+    volumeMounts:
+    - mountPath: /dev/hugepages
+      name: hugepage
+  volumes:
+  - name: hugepage
+    emptyDir:
+      medium: HugePages
+
