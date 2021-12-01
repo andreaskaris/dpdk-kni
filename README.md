@@ -47,7 +47,7 @@ metadata:
 spec:
   containers:
   - name: testpmd
-    image: quay.io/akaris/dpdk-kni:v1.0
+    image: quay.io/akaris/dpdk-kni:<current tag>
     env:
       - name: PCI_DEVICE_FILTER
         value: "PCIDEVICE_OPENSHIFT_IO"
