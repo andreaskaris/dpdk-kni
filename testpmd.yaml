@@ -18,7 +18,7 @@ spec:
       - name: PCI_DEVICE_FILTER
         value: "PCIDEVICE_OPENSHIFT_IO"
       - name: IP_ADDRESS
-        value: "192.168.109.10"
+        value: "192.168.109.10/24"
     imagePullPolicy: Always
     command: ["/bin/bash", "-c", "/entrypoint.sh"]
     resources:
