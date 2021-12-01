@@ -2,6 +2,7 @@
 
 # https://doc.dpdk.org/guides-20.11/prog_guide/build-sdk-meson.html
 # https://doc.dpdk.org/guides/sample_app_ug/compiling.html
+# http://patches.dpdk.org/project/dpdk/patch/1625058550-9567-1-git-send-email-juraj.linkes@pantheon.tech/
 
 yum install xz meson -y
 yum install "@Development Tools" -y
