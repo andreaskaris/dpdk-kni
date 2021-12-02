@@ -16,35 +16,6 @@ function addip {
 	fi
 }
 
-function get_first_cpus_from_mask() {
-        local mask=$1
-        local n=$2
-        local hexmask="0x$mask"
-        local pos=0
-        local shifted=0
-        local cpulist=""
-        local numcpus=0
-
-        while [[ $shifted -le $hexmask ]]; do
-                shifted=$((1<<pos))
-                if [[ $(( hexmask & shifted )) -gt 0 ]]; then
-                        if [ "$cpulist" == "" ]; then
-                                cpulist="$pos"
-                        else
-                                cpulist="$cpulist,$pos"
-                        fi
-                        numcpus=$(( numcpus + 1))
-                        if [[ $numcpus -ge $n ]]; then
-                                break
-                        fi
-                fi
-                pos=$(( pos + 1 ))
-        done
-
-        echo $cpulist
-}
-
-
 echo "Get PCI_DEVICE_ID from filter expression"
 PCI_DEVICE_FILTER=${PCI_DEVICE_FILTER:-PCIDEVICE_OPENSHIFT_IO}
 PCI_DEVICE_ID=$(env | egrep "^$PCI_DEVICE_FILTER" | awk -F '=' '{print $NF}' | head -1) 
@@ -57,9 +28,8 @@ else
 fi
 
 if [ "$PINNED_LCORES" == "" ]; then
-	echo "Get the first 4 available CPUs from the Cpus_allowed: list"
-	cpus_allowed_mask=$(cat /proc/self/status | awk '/Cpus_allowed:/ {print $NF}')
-	PINNED_LCORES=$(get_first_cpus_from_mask $cpus_allowed_mask 4)
+	echo "Get available CPUs from the Cpus_allowed: list"
+	PINNED_LCORES=$(cat /proc/self/status | awk '/Cpus_allowed_list:/ {print $NF}')
 	echo "Pinned lcores will be: $PINNED_LCORES"
 else
 	echo "Using PINNED_LCORES '$PINNED_LCORES' from configuration"
