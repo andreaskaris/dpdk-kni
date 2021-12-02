@@ -19,6 +19,10 @@ spec:
         value: "PCIDEVICE_OPENSHIFT_IO"
       - name: IP_ADDRESS
         value: "192.168.109.10/24"
+      - name: MACADDR
+        value: ""  # set this to override dpdk-testpmd dp0 mac address
+      - name: PINNED_LCORES
+        value: ""  # set this to override lcores of dpdk-testpmd process. Otherwise, all CPUs will be chosen from cgroup's allowed cpu list
     imagePullPolicy: IfNotPresent
     command: ["/bin/bash", "-c", "/entrypoint.sh"]
     resources:
